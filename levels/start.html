@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+
+<canvas tabindex=1 ></canvas>
+</style>
+</head>
+<body onload="startGame()">
+<script>
+
+
+var chawd=1000*1.15;
+var lambai=270*1.57;
+var myGamePiece;
+var myBackground;
+var myObstacle;
+//var jumping = "false";
+var nah = 0;
+var han=0;
+var newpiecex1 = 0;
+var ctr=0;
+var u = 0;
+var ff=0;
+var fff=0;
+var t=0;
+var uu=1;
+var gamedone=1;
+var reached=0;
+var reached1=0;
+var canvas,lastDownTarget;
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = chawd;
+        this.canvas.height = lambai + 200;
+        this.canvas.addEventListener('click', function(event) { if (event.pageX>0 && event.pageY > 0 && event.pageY < 10000 + 40 && event.pageX<chawd*0.5+100) {toggleFullScreen(); land();}}, false);
+        window.addEventListener('keypress', function(event) { if(event.keyCode==32){move();}});
+       //this.canvas.onkeydown = function(event) {land()};
+        chawd=this.canvas.width;
+        lambai=this.canvas.height;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        if(gamedone == 1)
+        this.interval = setInterval(updateGameArea, 0.0000009);
+        },
+        
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
+    }
+    //this.canvas.addEventListener('click',land(){},false);    
+}
+windows.onload = function(){
+    canvas = document.getElementById('canvas');
+
+    document.addEventListener('mousedown', function(event) {
+        if (event.pageX>chawd*0.5 && event.pageY > 0.65*lambai - 40 && event.pageY < 0.65*lambai + 80 && event.pageX<chawd*0.5+100) {land()}; 
+    }, true);
+
+    document.addEventListener('keydown', function(event) {
+        if(lastDownTarget == canvas) {
+            alert('keydown');
+        }
+        if(event.keyCode>2)
+        {
+          land();
+        }
+    }, false);
+}
+
+function startGame() {
+    myGamePiece = new component(chawd*0.7, lambai*0.5, "title.png", chawd*0.2,  lambai/7, "image");
+    myBackground = new component(chawd, lambai, "back.jpg", 20, 20, "image");
+  myGround = new component(chawd,lambai/2,"ground.png", 20 ,lambai,"image");
+    myObstacle = new component(30, 40, "enemy1.jpg", 6.2*chawd/12, lambai-40, "image");
+   
+   myObstacle1 = new component(30, 40, "enemy1.jpg", 8.4*chawd/12, lambai-40, "image");
+   myObstacle3 = new component(28, 30, "000-2.png", 3.6*chawd/12, lambai-30, "image");
+      
+       myObstacle2 = new component(30, 40, "enemy1.jpg", 10.8*chawd/12, lambai-40, "image");
+    
+     myGamePiece1 = new component(40, 40, "khush.jpg.png", 0,lambai-30, "image");
+     
+     myHome = new component(100,100,"play1.png", chawd*0.5,0.65*lambai,"image");
+    myGamePiece2 = new component(42, 30, "mara.png", 20, 240, "image");
+  
+    mytitle = new component(0.7*chawd, 100, "title.png", 30, 40, "image");
+    myGameArea.start();
+}
+
+
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (type == "image") {
+     
+     
+           ctx.drawImage(this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+         } 
+         else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+    ff=this.x;
+      fff=this.y;
+      
+      if((this.x > 130 && this.x < 160) && (this.y < 241 && this.y > 200))
+      {
+        //gameover(this.x,this.y);
+      //return;}
+      }
+
+        this.x += this.speedX;
+        this.y -= this.speedY;
+        
+        if(newpiecex1 == 10 && this.width == 50)
+        {//this.x += 134;
+        newpiecex1 = 0;}
+        //console.log(newpiecex);
+       
+      if(this.width==50)
+      nah=this.x;
+      if(this.x > 100 && nah == 1)
+      {
+        this.x = newpiecex1;
+       // newpiecex1 += 9; 
+      }
+      if(this.x>1050 )
+      this.x=0;
+      if(this.x<10 && this.width==100)
+      this.x = 400;
+     
+     
+    
+    }
+    
+   }
+   
+
+function updateGameArea() {
+  
+  
+  
+  
+    myGameArea.clear();
+    myGamePiece.speedX = 0;
+   
+    myBackground.newPos();    
+    myBackground.update();
+  
+    if(reached1 == 0)
+    myObstacle3.speedX += .0081 * 0.14;
+    else
+    myObstacle3.speedX -= .00781 * 0.14;
+    
+    // myObstacle.newPos();
+    //myObstacle.update();
+     myHome.newPos();
+     myHome.update();
+   
+  myGround.newPos();
+  myGround.update();
+      //myGamePiece.newPos();    
+     // myGamePiece.update();
+      // myGamePiece1.newPos();    
+      // myGamePiece1.update();
+      
+    
+    if (u==0 ) {
+     myGamePiece.newPos();    
+    myGamePiece.update();
+    }
+    else{
+      
+      
+    myGamePiece1.newPos();
+     
+    myGamePiece1.update();
+    mytitle.newPos();
+    mytitle.update();
+    if(ctr>36){ u = 0; myGamePiece.x+= 120; ctr=0;}
+  
+   }
+   if(u==0){
+    if(myGamePiece.x - myObstacle.x <= myObstacle.width && myGamePiece.x - myObstacle.x > 0 || myObstacle.x - myGamePiece.x <= myGamePiece.width && myObstacle.x - myGamePiece.x > 0)
+    {
+      if(myGamePiece.y + myGamePiece.height > myObstacle.y  && myGamePiece.y <= myObstacle.y)
+      GameOver();//myGamePiece.x=0;
+      
+      if(myGamePiece.y < myObstacle.y + myObstacle.height && myGamePiece.y >= myObstacle.y)
+      GameOver();//myGamePiece.x=0;
+      
+    }}
+    if(u==1){
+    if((myGamePiece1.x - myObstacle.x <= myObstacle.width - 10 && myGamePiece1.x - myObstacle.x > 0) || (myObstacle.x - myGamePiece1.x <= myGamePiece1.width && myObstacle.x - myGamePiece1.x > 0))
+    {
+      if(myGamePiece1.y + myGamePiece1.height > myObstacle.y  && myGamePiece1.y <= myObstacle.y)
+      GameOver();//myGamePiece.x=0;
+      
+      if(myGamePiece1.y < myObstacle.y + myObstacle.height && myGamePiece1.y >= myObstacle.y)
+      GameOver();//myGamePiece.x=0;
+      
+    }}
+    if(myGamePiece.x > 950)
+    {
+      window.location.replace("./ff2.html");
+    }
+   
+   
+  }
+
+function toggleFullScreen() {
+  if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+   (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+    if (document.documentElement.requestFullScreen) {  
+      document.documentElement.requestFullScreen();  
+    } else if (document.documentElement.mozRequestFullScreen) {  
+      document.documentElement.mozRequestFullScreen();  
+    } else if (document.documentElement.webkitRequestFullScreen) {  
+      document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
+    }  
+  } else {  
+    if (document.cancelFullScreen) {  
+      document.cancelFullScreen();  
+    } else if (document.mozCancelFullScreen) {  
+      document.mozCancelFullScreen();  
+    } else if (document.webkitCancelFullScreen) {  
+      document.webkitCancelFullScreen();  
+    }  
+  }  
+}
+function move() {
+    u=1;
+    uu=1;    
+}
+
+
+/*function clearmove() {
+    myGamePiece.image.src = "003.png";
+    myGamePiece.speedX = 0; 
+    myGamePiece.speedY = 0; 
+}*/
+
+
+function land()
+{
+  window.location.replace("./ff1.html");
+  
+}
+function GameOver()
+{
+
+  myGamePiece2.newPos();
+  myGamePiece2.update();
+  sleep(10);
+  myGamePiece.x=0;
+}
+
+function sleep(miliseconds) {
+   var currentTime = new Date().getTime();
+  
+   while (currentTime + miliseconds >= new Date().getTime() ) {
+   
+   }
+}
+/*function gameover(x,y)
+{
+  gamedone=0;
+  myGameArea.clear();
+   
+    myBackground.update();
+    
+
+    myObstacle.update();
+    
+     mybadal1.newPos();
+    mybadal1.update();
+  myGamePiece2.x=x;
+  myGamePiece2.y=y;
+  myGamePiece2.update();
+  
+  
+}*/
+</script>
+</body>
+</html>
+

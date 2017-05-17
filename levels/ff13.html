@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+
+<canvas tabindex=1 ></canvas>
+</style>
+</head>
+<b>INSTRUCTIONS</b>
+ ON enter KEY EXIT OR ENTER FULLSCREEN. KEEP YOUR MOUSE STILL. USE SPACEBAR TO JUMP.
+
+<body onload="startGame()">
+<script>
+
+
+var reached2=0;
+var ww=0;
+var hh=0;
+var myGamePiece;
+var myBackground;
+var myObstacle;
+var nah = 0;
+var han=0;
+var newpiecex1 = 0;
+var ctr=0;
+var u = 0;
+var t=0;
+var uu=1;
+var gamedone=1;
+var reached=0;
+var reached1=0;
+var canvas;
+var counter;
+
+var flag=0;
+var tt=0;
+
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        ww = window.innerWidth ;
+        hh =  window.innerHeight * 0.65;
+        this.canvas.addEventListener('click', function(event) { if (event.pageX>ww - 100 && event.pageY > 10 && event.pageY < 70 && event.pageX<ww ) {land()}}, false);
+        window.addEventListener('keypress', function(event) { if(event.keyCode==32 && u!=2){move(); event.preventDefault();}});
+        window.addEventListener('keypress', function(event) { if(event.keyCode==13){toggleFullScreen();}});
+        ww=this.canvas.width;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        if(gamedone == 1)
+        this.interval = setInterval(updateGameArea, 0.0000009);
+        },
+        
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
+    }
+}
+
+
+function startGame() {
+
+
+    toggleFullScreen();
+    ww = window.innerWidth ;
+  hh = window.innerHeight * 0.65;
+        
+    myGamePiece = new component(63, 40, "me.png", 20, hh-40, "image");
+    myBackground = new component(ww, hh, "back3.png", 0, 0, "image");
+    myGround = new component(ww,350,"ground.png", 0,hh,"image");
+
+    myObstacle = new component(30, 40, "enemy1.jpg", 6.2*ww/12, hh-40, "image");
+   myObstacle1 = new component(29, 35, "enemy2.png", 8*ww/12,  hh-35, "image");
+   myObstacle3 = new component(28, 35, "enemy2.png", 3.3*ww/12, hh-35, "image");
+      
+    myObstacle2 = new component(1.3*ww/12, 30, "000.png",  9.3*ww/12, hh-70, "image");
+    
+     myGamePiece1 = new component(60, 40, "me1.png", 0,hh-30, "image");
+   
+       myHome = new component(41,41,"home.png", ww - 100 ,10,"image");
+      myGamePiece2 = new component(52, 40, "mara.png", 20, 240, "image");
+    mybadal1 = new component(ww/5,hh/5, "badal.png",ww*0.8,30,"image");
+    myGameArea.start();
+}
+
+
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (type == "image") {
+	   
+	   
+           ctx.drawImage(this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+         } 
+         else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+		
+        
+          this.x += this.speedX;
+        this.y -= this.speedY;
+      
+
+      if(this.width==63)
+      nah=this.x;
+
+      if(this.width == 60)
+      han=this.x;
+
+
+      if(this.x>ww-63 && this.width == 63)
+        land1();
+     if(this.width == ww/5 && this.x<10)
+     this.x = ww*0.8;
+     
+     
+    
+     
+	   
+	   
+		if(this.width == 29)
+		{
+			if(this.x < 8*ww/12)
+				{
+					this.x=8*ww/12;
+					this.speedX=0.0002;
+					reached=0;
+				}
+			else if ( this.x > 9*ww/12  )
+				{
+					this.x =9*ww/12;
+					
+					this.speedX=0.0002;
+					reached=1;	
+				}
+		}
+	   
+		if(this.width == 28)
+		{
+			if(this.x < 3.3*ww/12)
+				{
+					this.x=3.3*ww/12;
+					this.speedX=0.0002;
+					reached1=0;
+				}
+			else if ( this.x > 5*ww/12  )
+				{
+					this.x = 5*ww/12 ;
+					
+					this.speedX=0.0002;
+					reached1=1;	
+				}
+		}
+		
+		if(this.width == 1.3*ww/12)
+		{
+			if(this.x < 9.3*ww/12)
+				{
+					this.x=9.3*ww/12;
+					this.speedX=0.0002;
+					reached2=0;
+				}
+			else if ( this.x > 10.3*ww/12 )
+				{
+					this.x = 10.3*ww/12 ;
+					
+					this.speedX=0.0002;
+					reached2=1;	
+				}
+			
+			
+		}
+	   
+        if(this.width == 60)
+        {
+          
+          if(uu == 1)
+          {
+            uu=0;
+            this.x=nah;
+            this.speedX=0;
+            this.speedY=10.12;
+            this.y=hh - 40;
+          }
+          if(ctr<36){
+            this.speedY -= 0.562;}
+        
+        else if(ctr >36){
+      
+          return;
+          }
+        han=this.x  
+          this.x += 4;
+          ctr++;
+      
+        }
+
+        if(this.width==52)
+        {
+          
+      counter--;
+          if (flag==0){
+            myGamePiece2.x=nah+7;
+            myGamePiece2.y=hh-40;
+           
+            
+          }
+          else{
+          myGamePiece2.x=han+6;
+          myGamePiece2.y=myGamePiece1.y;
+    
+          }
+        }  
+    }
+    
+   }
+   
+
+function updateGameArea() {
+	
+	
+	
+	
+    myGameArea.clear();
+    myGamePiece.speedX = 0.98;
+    mybadal1.speedX=-2;
+    myBackground.newPos();    
+    myBackground.update();
+    
+    if(reached == 0)
+    myObstacle1.speedX = 0.3;
+    else
+    myObstacle1.speedX = -0.3;
+    
+    if(reached1 == 0)
+    myObstacle3.speedX += .05*0.5*0.5*0.5*0.5;
+    else
+    myObstacle3.speedX -= .05*0.5*0.5*0.5*0.5;
+    
+    if(reached2 == 0 )
+    myObstacle2.speedX = 0.3;
+    else
+    myObstacle2.speedX = -0.3;
+     myObstacle.newPos();
+    myObstacle.update();
+    myGround.newPos();
+    myGround.update();
+     myObstacle1.newPos();
+    myObstacle1.update();
+    
+    myObstacle3.newPos();
+    myObstacle3.update();
+     myObstacle2.newPos();
+    myObstacle2.update();
+     myHome.newPos();
+     myHome.update();
+    
+     mybadal1.newPos();
+    mybadal1.update();
+
+      //myGamePiece.newPos();    
+     // myGamePiece.update();
+      // myGamePiece1.newPos();    
+      // myGamePiece1.update();
+      
+     if (u==0 ) {
+     myGamePiece.newPos();    
+    myGamePiece.update();
+    }
+    else if(u==1){
+      
+      
+    myGamePiece1.newPos();
+     
+    myGamePiece1.update();
+    if(ctr>36){ u = 0;  myGamePiece.x+= 144;  nah+=144; flag=0; ctr=0;}
+  
+   }
+   else{
+      myGamePiece2.newPos();
+          myGamePiece2.update();
+      if(counter==0){
+  reset();
+    }
+   
+   }
+
+   if(u==0){
+   	if(myGamePiece.x - myObstacle.x <= myObstacle.width && myGamePiece.x - myObstacle.x > 0 || myObstacle.x - myGamePiece.x <= myGamePiece.width && myObstacle.x - myGamePiece.x > 0)
+   	{
+	   	if(myGamePiece.y + myGamePiece.height > myObstacle.y  && myGamePiece.y <= myObstacle.y)
+	   GameOver();
+	   	
+	   	if(myGamePiece.y < myObstacle.y + myObstacle.height && myGamePiece.y >= myObstacle.y)
+	   GameOver();
+	   	
+   	}}
+   	if(u==1){
+   	if((myGamePiece1.x - myObstacle.x <= myObstacle.width - 10 && myGamePiece1.x - myObstacle.x > 0) || (myObstacle.x - myGamePiece1.x <= myGamePiece1.width && myObstacle.x - myGamePiece1.x > 0))
+   	{
+	   	if(myGamePiece1.y + myGamePiece1.height > myObstacle.y  && myGamePiece1.y <= myObstacle.y)
+	   GameOver();
+	   	
+	   	if(myGamePiece1.y < myObstacle.y + myObstacle.height && myGamePiece1.y >= myObstacle.y)
+	 GameOver();
+	   	
+   	}}
+   	if(u==0){
+   	if(myGamePiece.x - myObstacle1.x <= myObstacle1.width && myGamePiece.x - myObstacle1.x > 0 || myObstacle1.x - myGamePiece.x <= myGamePiece.width && myObstacle1.x - myGamePiece.x > 0)
+   	{
+	   	if(myGamePiece.y + myGamePiece.height > myObstacle1.y  && myGamePiece.y <= myObstacle1.y)
+	 GameOver();
+	   	
+	   	if(myGamePiece.y < myObstacle1.y + myObstacle1.height && myGamePiece.y >= myObstacle1.y)
+	   	GameOver();
+	   	
+   	}}
+   	if(u==1){
+   	if((myGamePiece1.x - myObstacle1.x <= myObstacle1.width - 10 && myGamePiece1.x - myObstacle1.x > 0) || (myObstacle1.x - myGamePiece1.x <= myGamePiece1.width && myObstacle1.x - myGamePiece1.x > 0))
+   	{
+	   	if(myGamePiece1.y + myGamePiece1.height > myObstacle1.y  && myGamePiece1.y <= myObstacle1.y)
+	   GameOver();
+	   	
+	   	if(myGamePiece1.y < myObstacle1.y + myObstacle1.height && myGamePiece1.y >= myObstacle1.y)
+	  GameOver();
+	   	
+   	}}
+   	if(u==0 ){
+   if(myGamePiece.x - myObstacle3.x <= myObstacle3.width && myGamePiece.x - myObstacle3.x > 0 || myObstacle3.x - myGamePiece.x <= myGamePiece.width && myObstacle3.x - myGamePiece.x > 0)
+   	{
+	   	if(myGamePiece.y + myGamePiece.height > myObstacle3.y  && myGamePiece.y <= myObstacle3.y)
+	  GameOver();
+	   	
+	   	if(myGamePiece.y < myObstacle3.y + myObstacle3.height && myGamePiece.y >= myObstacle3.y)
+	 GameOver();	   	
+   	}}
+   	if(u==1){
+   	if((myGamePiece1.x - myObstacle3.x <= myObstacle3.width - 10 && myGamePiece1.x - myObstacle3.x > 0) || (myObstacle3.x - myGamePiece1.x <= myGamePiece1.width && myObstacle3.x - myGamePiece1.x > 0))
+   	{	
+	   	if(myGamePiece1.y + myGamePiece1.height > myObstacle3.y  && myGamePiece1.y <= myObstacle3.y)
+	 GameOver();
+	   	
+	   	if(myGamePiece1.y < myObstacle3.y + myObstacle3.height && myGamePiece1.y >= myObstacle3.y)
+	GameOver();
+	   	
+	   	
+	   	
+   	}}
+		if(u==0 ){
+   if(myGamePiece.x - myObstacle2.x <= myObstacle2.width && myGamePiece.x - myObstacle2.x > 0 || myObstacle2.x - myGamePiece.x <= myGamePiece.width && myObstacle2.x - myGamePiece.x > 0)
+   	{
+	   	if(myGamePiece.y + myGamePiece.height > myObstacle2.y  && myGamePiece.y <= myObstacle2.y)
+	  GameOver();
+	   	
+	   	if(myGamePiece.y < myObstacle2.y + myObstacle2.height && myGamePiece.y >= myObstacle2.y)
+	GameOver();
+	   	
+   	}}
+   	if(u==1){
+   	if((myGamePiece1.x - myObstacle2.x <= myObstacle2.width - 10 && myGamePiece1.x - myObstacle2.x > 0) || (myObstacle2.x - myGamePiece1.x <= myGamePiece1.width && myObstacle2.x - myGamePiece1.x > 0))
+   	{	
+	   	if(myGamePiece1.y + myGamePiece1.height > myObstacle2.y  && myGamePiece1.y <= myObstacle2.y)
+	GameOver();
+	   	
+	   	if(myGamePiece1.y < myObstacle2.y + myObstacle2.height && myGamePiece1.y >= myObstacle2.y)
+	  GameOver();
+	   	
+	   	
+	   	
+   	}}
+
+   	 if(myGamePiece.x > ww)
+    {
+      window.location.replace("./ff14.html");
+    }}
+   
+
+function move() {
+    u=1;
+    uu=1;    
+    flag=1;
+}
+
+
+function land1()
+{
+  window.location.replace("./ff14.html");
+  
+}
+
+function land()
+{
+  window.location.replace("./start.html");
+  
+}
+function reset(){
+  
+      t=0,flag=0,han=0,ctr=0,u=0,tt=0,nah=0,gamedone=1,reached=0,reached1=0,reached2=0;
+      myGamePiece.x=0;
+      uu=1;    
+}
+
+function GameOver()
+{ 
+  counter=30;
+  u=2;
+  updateGameArea();
+  return;
+}
+
+
+function sleep(miliseconds) {
+   var currentTime = new Date().getTime();
+   myGamePiece2.x=myGamePiece1.x;
+   myGamePiece2.y=myGamePiece1.y;
+   myGamePiece1.x=nah;
+   myGamePiece2.x = ww*2;
+   myGamePiece2.y=hh*2;
+   while (currentTime + miliseconds >= new Date().getTime() ) {
+   
+   }
+}
+function toggleFullScreen() {
+  if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+   (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+    if (document.documentElement.requestFullScreen) {  
+      document.documentElement.requestFullScreen();  
+    } else if (document.documentElement.mozRequestFullScreen) {  
+      document.documentElement.mozRequestFullScreen();  
+    } else if (document.documentElement.webkitRequestFullScreen) {  
+      document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
+    }  
+  } else {  
+    if (document.cancelFullScreen) {  
+      document.cancelFullScreen();  
+    } else if (document.mozCancelFullScreen) {  
+      document.mozCancelFullScreen();  
+    } else if (document.webkitCancelFullScreen) {  
+      document.webkitCancelFullScreen();  
+    }  
+  }  
+}
+</script>
+
+</body>
+</html>
+
